@@ -2,29 +2,48 @@ import React, { useEffect, useState } from "react";
 import { FaDonate } from "react-icons/fa";
 import { Modal, ModalHeader, ModalBody, Row, Button } from "reactstrap";
 import "./Projects.css";
+import { pinata } from "../../utils/configPinta";
 
 const ProjectCard = ({ project }) => {
-  return (
-    <a
-      href={project?.githubLink}
-      className="project-card"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <div className="card-img">
-        <img
-          src={`https://gateway.pinata.cloud/ipfs/${project?.image}`}
-          alt="Project image"
-          onError={(e) => (e.target.src = "/fallback-image.png")}
-        />
-      </div>
-      <div className="card-text">
-        <h3>{project?.name}</h3>
-        <p>{project?.description}</p>
-      </div>
-    </a>
-  );
-};
+    const [imageUrl, setImageUrl] = useState("");
+  
+    useEffect(() => {
+      const fetchIpfsUrl = async () => {
+        try {
+          const url = await pinata.gateways.convert(project?.image);
+          setImageUrl(url);
+        } catch (error) {
+          console.error("Error fetching IPFS URL:", error);
+          setImageUrl("/fallback-image.png"); // Set a fallback image on error
+        }
+      };
+  
+      if (project?.image) {
+        fetchIpfsUrl();
+      }
+    }, [project?.image]);
+  
+    return (
+      <a
+        href={project?.githubLink}
+        className="project-card"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <div className="card-img">
+          <img
+            src={imageUrl || "/fallback-image.png"}
+            alt="Project"
+            onError={(e) => (e.target.src = "/fallback-image.png")}
+          />
+        </div>
+        <div className="card-text">
+          <h3>{project?.name}</h3>
+          <p>{project?.description}</p>
+        </div>
+      </a>
+    );
+  };
 
 const Projects = ({ web3State }) => {
   const [modal, setModal] = useState(false);
@@ -95,7 +114,7 @@ const Projects = ({ web3State }) => {
         </ModalBody>
       </Modal>
       <p className="donate" onClick={() => setModal(true)}>
-        Liked the dummyValue's? Consider donating Eth's{" "}
+        Liked the Project's? Consider donating Eth's{" "}
         <FaDonate className="icon" />
       </p>
     </section>

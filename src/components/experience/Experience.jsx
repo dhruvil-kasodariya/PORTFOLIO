@@ -1,7 +1,20 @@
 import { SlCalender } from "react-icons/sl"
 import './Experience.css'
+import { useEffect, useState } from "react";
 
-const Experience = () => {
+const Experience = ({web3State}) => {
+
+    const [allEduction,setAllEduction]=useState([]);
+    const { contract } = web3State;
+    useEffect(() => {
+    const eductionDetails = async () => {
+      if (contract) {
+        const eductions = await contract.methods.allEduction().call();
+        setAllEduction(eductions);
+      }
+    };
+    web3State.contract && eductionDetails();
+  }, [web3State.contract]);
 
     return (
         <section className="exp-section">
@@ -11,16 +24,16 @@ const Experience = () => {
 
                 <div className="education">
                     <h1 className="edu-tittle">Education</h1>
-                    {[1,2,3].map((dummyValue)=>{
+                    {allEduction.map((item,index)=>{
                         return (   
-                        <div className="edu-card">
+                        <div className="edu-card" key={index}>
                         <p className="card-text1">
-                            <SlCalender className='icon' /> 10/05/2013 - 10/05/2014
+                            <SlCalender className='icon' /> {item.date}
                         </p>
-                        <h3 className="card-text2">Intermediate</h3>
-                        <p className="card-text3">Description Of Your Course</p>
+                        <h3 className="card-text2">{item.degree}</h3>
+                     
                         <p className="card-text4">
-                        Institution Name
+                        {item.instutionName}
                         </p>
                     </div>)
                     })}

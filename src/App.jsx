@@ -20,8 +20,8 @@ function App() {
       <Handles />
       <Projects web3State={web3State}/>
       <Skills />
-      <Experience/>
-      <Contact/>
+      <Experience web3State={web3State}/>
+      <Contact web3State={web3State}/>
       <Handles />
     </>
   );

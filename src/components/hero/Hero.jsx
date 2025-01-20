@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, ModalBody, Row } from "reactstrap";
 import heroImg from "../../assets/hero-img.png";
 import "./Hero.css";
+import { pinata } from "../../utils/configPinta";
 
 const Hero = ({ web3State }) => {
   const [modal, setModal] = useState(false);
@@ -16,8 +17,9 @@ const Hero = ({ web3State }) => {
             web3State.contract.methods.description().call(),
             web3State.contract.methods.imageLink().call(),
           ]);
+          const ipfsUrl = await pinata.gateways.convert(profileImageLink)
           setDescription(descriptionText);
-          setProfileImage(profileImageLink);
+          setProfileImage(ipfsUrl);
         } catch (error) {
           console.error("Error fetching hero data:", error);
         }
@@ -25,6 +27,7 @@ const Hero = ({ web3State }) => {
     };
     fetchHeroData();
   }, [web3State.contract]);
+  
 
   return (
     <section className="hero">
@@ -55,7 +58,7 @@ const Hero = ({ web3State }) => {
         <div className="hero-img">
           <div className="img-container">
             <img
-              src={`https://gateway.pinata.cloud/ipfs/${profileImage}`}
+              src={profileImage}
               alt="profilePhoto"
               onError={(e) => (e.target.src = heroImg)}
             />
