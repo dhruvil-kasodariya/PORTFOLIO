@@ -25,7 +25,7 @@ const ProjectCard = ({ project }) => {
   
     return (
       <a
-        href={project?.githubLink}
+        href={`https://github.com/dhruvil-kasodariya/${project?.githubLink}`}
         className="project-card"
         target="_blank"
         rel="noopener noreferrer"
